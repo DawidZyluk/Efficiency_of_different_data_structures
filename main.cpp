@@ -4,30 +4,89 @@
 
 using namespace std;
 
-struct node
+struct list_node
 {
 	int data;
-	node* next;
+	list_node* next;
 };
 
+struct bst_node
+{
+	bst_node* lchild;
+	int data;
+	bst_node* rchild;
+};
+
+class BST 
+{
+private:
+	bst_node* root;
+public:
+	BST() { root = nullptr; }
+
+};
+
+int* GetData(string fname);
+int GetSize(string fname);
 void DisplayArray(int* A, int n);
-void DisplayList(node* head);
-void GetData(string nazwa);
-node* CreateList(int* A, int size);
 int* Insert(int* A, int len, int x, int index);
+list_node* CreateList(int* A, int size);
+void DisplayList(list_node* head);
 
 int main()
 {
-	string nazwa;
+	string fname = "dane.txt";
 	/*cout << "Wybierz plik: ";
-	cin >> nazwa;*/
-	nazwa = "dane.txt";
+	cin >> fname;*/
 
-	int A[] = { 3, 5, 7, 10, 15 };
-	int size = sizeof(A) / sizeof(A[0]);
-	node* list =  CreateList(A, size);
-	DisplayList(list);
+	int size = GetSize(fname);
+	int* tab = GetData(fname);	
+	DisplayArray(tab, size);
 	
+}
+
+int* GetData(string fname)
+{
+	fstream file;
+	file.open(fname, ios::in);
+	int* res = nullptr;
+
+	if (file)
+	{
+		string line;
+		getline(file, line);
+		int size = stoi(line);
+
+		res = new int[size];
+		int i = 0;
+		while (getline(file, line))
+		{
+			res[i++] = stoi(line);
+		}
+	}
+	else
+	{
+		cout << "Plik nie istnieje";
+		exit(0);
+	}
+
+	file.close();
+	return res;
+}
+
+int GetSize(string fname)
+{
+	fstream file;
+	file.open(fname, ios::in);
+	int size = 0;
+	if (file)
+	{
+		string line;
+		getline(file, line);
+		size = stoi(line);
+		file.close();
+	}
+	return size;
 }
 
 void DisplayArray(int* A, int n)
@@ -39,63 +98,6 @@ void DisplayArray(int* A, int n)
 		if (i < n - 1) cout << ", ";
 	}
 	cout << " ]" << endl;
-}
-
-void DisplayList(node* head)
-{
-	node* p = head;
-
-	while (p != nullptr) 
-	{
-		cout << p->data << " -> " << flush;
-		p = p->next;
-	}
-}
-
-void GetData(string nazwa)
-{
-	fstream file;
-	string line;
-	file.open(nazwa, ios::in);
-
-	if (file)
-	{
-		while (getline(file, line))
-		{
-			cout << line;
-		}
-	}
-	else
-	{
-		cout << "Plik nie istnieje";
-		exit(0);
-	}
-
-	file.close();
-}
-
-node* CreateList(int* A, int size)
-{
-	node* head = new node;
-
-	node* temp;
-	node* last;
-
-	head->data = A[0];
-	head->next = nullptr;
-	last = head;
-
-	for (int i = 1; i < size; i++)
-	{
-		temp = new node;
-
-		temp->data = A[i];
-		temp->next = nullptr;
-
-		last->next = temp;
-		last = temp;
-	}
-	return head;
 }
 
 int* Insert(int* A, int len, int x, int index)
@@ -120,3 +122,40 @@ int* Insert(int* A, int len, int x, int index)
 	}
 	return res;
 }
+
+list_node* CreateList(int* A, int size)
+{
+	list_node* head = new list_node;
+
+	list_node* temp;
+	list_node* last;
+
+	head->data = A[0];
+	head->next = nullptr;
+	last = head;
+
+	for (int i = 1; i < size; i++)
+	{
+		temp = new list_node;
+
+		temp->data = A[i];
+		temp->next = nullptr;
+
+		last->next = temp;
+		last = temp;
+	}
+	return head;
+}
+
+void DisplayList(list_node* head)
+{
+	list_node* p = head;
+
+	while (p != nullptr) 
+	{
+		cout << p->data << " -> " << flush;
+		p = p->next;
+	}
+}
+
+
