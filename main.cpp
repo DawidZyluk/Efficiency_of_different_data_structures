@@ -4,21 +4,33 @@
 
 using namespace std;
 
-void Display(int* A, int n);
+struct node
+{
+	int data;
+	node* next;
+};
+
+void DisplayArray(int* A, int n);
+void DisplayList(node* head);
 void GetData(string nazwa);
-int* Insert(int* A, int len, int x, int indX);
+node* CreateList(int* A, int size);
+int* Insert(int* A, int len, int x, int index);
 
 int main()
 {
 	string nazwa;
-	cout << "Wybierz plik: ";
-	cin >> nazwa;
+	/*cout << "Wybierz plik: ";
+	cin >> nazwa;*/
 	nazwa = "dane.txt";
 
-	GetData(nazwa);
+	int A[] = { 3, 5, 7, 10, 15 };
+	int size = sizeof(A) / sizeof(A[0]);
+	node* list =  CreateList(A, size);
+	DisplayList(list);
+	
 }
 
-void Display(int* A, int n)
+void DisplayArray(int* A, int n)
 {
 	cout << "[ ";
 	for (int i = 0; i < n; i++)
@@ -27,6 +39,17 @@ void Display(int* A, int n)
 		if (i < n - 1) cout << ", ";
 	}
 	cout << " ]" << endl;
+}
+
+void DisplayList(node* head)
+{
+	node* p = head;
+
+	while (p != nullptr) 
+	{
+		cout << p->data << " -> " << flush;
+		p = p->next;
+	}
 }
 
 void GetData(string nazwa)
@@ -49,6 +72,30 @@ void GetData(string nazwa)
 	}
 
 	file.close();
+}
+
+node* CreateList(int* A, int size)
+{
+	node* head = new node;
+
+	node* temp;
+	node* last;
+
+	head->data = A[0];
+	head->next = nullptr;
+	last = head;
+
+	for (int i = 1; i < size; i++)
+	{
+		temp = new node;
+
+		temp->data = A[i];
+		temp->next = nullptr;
+
+		last->next = temp;
+		last = temp;
+	}
+	return head;
 }
 
 int* Insert(int* A, int len, int x, int index)
