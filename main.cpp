@@ -4,10 +4,24 @@
 
 using namespace std;
 
+// Add BST::Insert. Implement List class 
+// 
+
 struct list_node
 {
 	int data;
 	list_node* next;
+};
+
+class List
+{
+private:
+	list_node* head;
+public:
+	List() { head = nullptr; }
+	list_node* getHead() { return head; }
+	int Count(list_node* p);
+	void Insert(int x, int index);
 };
 
 struct bst_node
@@ -23,7 +37,8 @@ private:
 	bst_node* root;
 public:
 	BST() { root = nullptr; }
-
+	bst_node* getRoot() { return root; }
+	void Insert(int x);
 };
 
 int* GetData(string fname);
@@ -41,7 +56,15 @@ int main()
 
 	int size = GetSize(fname);
 	int* tab = GetData(fname);	
-	DisplayArray(tab, size);
+	//DisplayArray(tab, size);
+
+
+	List lista;
+	lista.Insert(1, 0);
+	lista.Insert(2, 1);
+	lista.Insert(3, 2);
+	lista.Insert(4, 0);
+	DisplayList(lista.getHead());
 	
 }
 
@@ -57,7 +80,7 @@ int* GetData(string fname)
 		getline(file, line);
 		int size = stoi(line);
 
-		res = new int[size];
+		res = new int[size+1];
 		int i = 0;
 		while (getline(file, line))
 		{
@@ -67,7 +90,6 @@ int* GetData(string fname)
 	else
 	{
 		cout << "Plik nie istnieje";
-		exit(0);
 	}
 
 	file.close();
@@ -158,4 +180,93 @@ void DisplayList(list_node* head)
 	}
 }
 
+void BST::Insert(int x)
+{
 
+	bst_node* t = root; // tail pointer
+	bst_node* p = nullptr;
+	bst_node* r = nullptr;
+
+	// root is empty
+	if (root == nullptr) 
+	{
+		p = new bst_node;
+		p->data = x;
+		p->lchild = nullptr;
+		p->rchild = nullptr;
+		root = p;
+		return;
+	}
+
+	while (t != nullptr) 
+	{
+		r = t;
+		if (x < t->data) t = t->lchild;
+		else if (x > t->data) t = t->rchild;
+		else return;
+	}
+
+	p = new bst_node;
+	p->data = x;
+	p->lchild = nullptr;
+	p->rchild = nullptr;
+
+	if (x < r->data) 
+	{
+		r->lchild = p;
+	}
+	else 
+	{
+		r->rchild = p;
+	}
+
+}
+
+int List::Count(list_node* p)
+{
+	int c = 0;
+	while (p)
+	{
+		c++;
+		p = p->next;
+	}
+	return c;
+}
+
+void List::Insert(int x, int index)
+{
+	list_node* list = head;
+	list_node* p = nullptr;
+	list_node* temp = new list_node;
+	temp->data = x;
+
+	if (index < 0 || index > Count(list))
+	{
+		cout << "Wrong Index";
+		return;
+	}
+	else
+	{
+		if (head == nullptr)
+		{
+			p = new list_node;
+			p->data = x;
+			p->next = nullptr;
+			head = p;
+			return;
+		}
+		else if(index == 0)
+		{
+			temp->next = head;
+			head = temp;
+		}
+		else
+		{
+			for (int i = 0; i < index - 1; i++)
+				list = list->next;
+			temp->next = list->next;
+			list->next = temp;
+
+		}
+	}
+}
