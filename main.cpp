@@ -4,7 +4,7 @@
 
 using namespace std;
 
-// Add BST::Insert. Implement List class 
+// Add List::Display(), List::Delete() and BST::Inorder(), BST::Delete()
 // 
 
 struct list_node
@@ -21,7 +21,9 @@ public:
 	List() { head = nullptr; }
 	list_node* getHead() { return head; }
 	int Count(list_node* p);
+	void Display();
 	void Insert(int x, int index);
+	void Delete(int index);
 };
 
 struct bst_node
@@ -39,6 +41,11 @@ public:
 	BST() { root = nullptr; }
 	bst_node* getRoot() { return root; }
 	void Insert(int x);
+	bst_node* Delete(bst_node* p, int key);
+	int Height(bst_node* p);
+	bst_node* InPre(bst_node* p);
+	bst_node* InSucc(bst_node* p);
+	void Inorder(bst_node* p);
 };
 
 int* GetData(string fname);
@@ -58,14 +65,21 @@ int main()
 	int* tab = GetData(fname);	
 	//DisplayArray(tab, size);
 
+	BST tree;
 
-	List lista;
-	lista.Insert(1, 0);
-	lista.Insert(2, 1);
-	lista.Insert(3, 2);
-	lista.Insert(4, 0);
-	DisplayList(lista.getHead());
+	tree.Insert(30);
+	tree.Insert(20);
+	tree.Insert(40);
+	tree.Insert(10);
+	tree.Insert(25);
+	tree.Insert(35);
+	tree.Insert(45);
 	
+	tree.Inorder(tree.getRoot());
+
+	tree.Delete(tree.getRoot(), 30);
+	cout << endl;
+	tree.Inorder(tree.getRoot());
 }
 
 int* GetData(string fname)
@@ -169,59 +183,6 @@ list_node* CreateList(int* A, int size)
 	return head;
 }
 
-void DisplayList(list_node* head)
-{
-	list_node* p = head;
-
-	while (p != nullptr) 
-	{
-		cout << p->data << " -> " << flush;
-		p = p->next;
-	}
-}
-
-void BST::Insert(int x)
-{
-
-	bst_node* t = root; // tail pointer
-	bst_node* p = nullptr;
-	bst_node* r = nullptr;
-
-	// root is empty
-	if (root == nullptr) 
-	{
-		p = new bst_node;
-		p->data = x;
-		p->lchild = nullptr;
-		p->rchild = nullptr;
-		root = p;
-		return;
-	}
-
-	while (t != nullptr) 
-	{
-		r = t;
-		if (x < t->data) t = t->lchild;
-		else if (x > t->data) t = t->rchild;
-		else return;
-	}
-
-	p = new bst_node;
-	p->data = x;
-	p->lchild = nullptr;
-	p->rchild = nullptr;
-
-	if (x < r->data) 
-	{
-		r->lchild = p;
-	}
-	else 
-	{
-		r->rchild = p;
-	}
-
-}
-
 int List::Count(list_node* p)
 {
 	int c = 0;
@@ -231,6 +192,16 @@ int List::Count(list_node* p)
 		p = p->next;
 	}
 	return c;
+}
+
+void List::Display()
+{
+	list_node* p = head;
+	while (p != NULL)
+	{
+		cout << p->data << "->";
+		p = p->next;
+	}
 }
 
 void List::Insert(int x, int index)
@@ -270,3 +241,160 @@ void List::Insert(int x, int index)
 		}
 	}
 }
+
+void List::Delete(int index)
+{
+	list_node* p = getHead();
+	list_node* q = nullptr;
+
+	if (index < 1 || index > Count(p))
+	{
+		cout << "Wrong index";
+	}
+	else if(index == 1)
+	{
+		q = head;
+		head = head->next;
+		free(q);
+	}
+	else
+	{
+		for (int i = 0; i < index - 1; i++)
+		{
+			q = p;
+			p = p->next;
+		}
+		q->next = p->next;
+		free(p);
+	}
+}
+
+void BST::Insert(int x)
+{
+
+	bst_node* t = root; // tail pointer
+	bst_node* p = nullptr;
+	bst_node* r = nullptr;
+
+	// root is empty
+	if (root == nullptr)
+	{
+		p = new bst_node;
+		p->data = x;
+		p->lchild = nullptr;
+		p->rchild = nullptr;
+		root = p;
+		return;
+	}
+
+	while (t != nullptr)
+	{
+		r = t;
+		if (x < t->data) t = t->lchild;
+		else if (x > t->data) t = t->rchild;
+		else return;
+	}
+
+	p = new bst_node;
+	p->data = x;
+	p->lchild = nullptr;
+	p->rchild = nullptr;
+
+	if (x < r->data)
+	{
+		r->lchild = p;
+	}
+	else
+	{
+		r->rchild = p;
+	}
+
+}
+
+bst_node* BST::Delete(bst_node* p, int x)
+{
+	bst_node* q;
+
+	if (p == nullptr) 
+	{
+		return nullptr;
+	}
+
+	if (p->lchild == nullptr && p->rchild == nullptr) 
+	{
+		if (p == root) 
+		{
+			root = nullptr;
+		}
+		delete p;
+		return nullptr;
+	}
+
+	if (x < p->data) 
+	{
+		p->lchild = Delete(p->lchild, x);
+	}
+	else if (x > p->data) 
+	{
+		p->rchild = Delete(p->rchild, x);
+	}
+	else 
+	{
+		if (Height(p->lchild) > Height(p->rchild)) 
+		{
+			q = InPre(p->lchild);
+			p->data = q->data;
+			p->lchild = Delete(p->lchild, q->data);
+		}
+		else 
+		{
+			q = InSucc(p->rchild);
+			p->data = q->data;
+			p->rchild = Delete(p->rchild, q->data);
+		}
+	}
+	return p;
+}
+
+int BST::Height(bst_node* p)
+{
+	int x;
+	int y;
+	if (p == nullptr) 
+	{
+		return 0;
+	}
+	x = Height(p->lchild);
+	y = Height(p->rchild);
+	return x > y ? x + 1 : y + 1;
+}
+
+bst_node* BST::InPre(bst_node* p)
+{
+	while (p && p->rchild != nullptr) 
+	{
+		p = p->rchild;
+	}
+	return p;
+}
+
+bst_node* BST::InSucc(bst_node* p)
+{
+	while (p && p->lchild != nullptr) 
+	{
+		p = p->lchild;
+	}
+	return p;
+}
+
+void BST::Inorder(bst_node* p)
+{
+	if (p) 
+	{
+		Inorder(p->lchild);
+		cout << p->data << ", " << flush;
+		Inorder(p->rchild);
+	}
+}
+
+
