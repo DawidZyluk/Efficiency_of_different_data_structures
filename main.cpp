@@ -4,8 +4,8 @@
 
 using namespace std;
 
-// Add List::Display(), List::Delete() and BST::Inorder(), BST::Delete()
-// 
+// TO DO:
+// Add List::Search() and BST::Search()
 
 struct list_node
 {
@@ -24,6 +24,7 @@ public:
 	void Display();
 	void Insert(int x, int index);
 	void Delete(int index);
+	list_node* Search(int x);
 };
 
 struct bst_node
@@ -41,11 +42,12 @@ public:
 	BST() { root = nullptr; }
 	bst_node* getRoot() { return root; }
 	void Insert(int x);
-	bst_node* Delete(bst_node* p, int key);
+	bst_node* Delete(bst_node* p, int x);
 	int Height(bst_node* p);
 	bst_node* InPre(bst_node* p);
 	bst_node* InSucc(bst_node* p);
 	void Inorder(bst_node* p);
+	bst_node* Search(int x);
 };
 
 int* GetData(string fname);
@@ -65,8 +67,14 @@ int main()
 	int* tab = GetData(fname);	
 	//DisplayArray(tab, size);
 
-	BST tree;
+	List list;
+	list.Insert(1, 0);
+	list.Insert(2, 1);
+	list.Insert(3, 2);
+	list.Insert(4, 3);
+	list.Insert(5, 4);
 
+	BST tree;
 	tree.Insert(30);
 	tree.Insert(20);
 	tree.Insert(40);
@@ -74,12 +82,10 @@ int main()
 	tree.Insert(25);
 	tree.Insert(35);
 	tree.Insert(45);
-	
-	tree.Inorder(tree.getRoot());
 
-	tree.Delete(tree.getRoot(), 30);
-	cout << endl;
-	tree.Inorder(tree.getRoot());
+	
+	/*tree.Inorder(tree.getRoot());
+	tree.Delete(tree.getRoot(), 30);*/
 }
 
 int* GetData(string fname)
@@ -269,6 +275,26 @@ void List::Delete(int index)
 	}
 }
 
+list_node* List::Search(int x)
+{
+	list_node* p = getHead();
+	list_node* q = nullptr;
+
+	while (p != NULL)
+	{
+		if (x == p->data)
+		{
+			q->next = p->next;
+			p->next = head;
+			head = p;
+			return p;
+		}
+		q = p;
+		p = p->next;
+	}
+	return NULL;
+}
+
 void BST::Insert(int x)
 {
 
@@ -397,4 +423,19 @@ void BST::Inorder(bst_node* p)
 	}
 }
 
-
+bst_node* BST::Search(int x)
+{
+	bst_node* t = root;
+	while (t != nullptr) {
+		if (x == t->data) {
+			return t;
+		}
+		else if (x < t->data) {
+			t = t->lchild;
+		}
+		else {
+			t = t->rchild;
+		}
+	}
+	return nullptr;
+}
