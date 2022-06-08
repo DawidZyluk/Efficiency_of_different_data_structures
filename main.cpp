@@ -5,57 +5,60 @@
 using namespace std;
 
 // TO DO:
-// Add List::Search() and BST::Search()
-
-struct list_node
-{
-	int data;
-	list_node* next;
-};
+// Move structs to classes. Add overloaded constructors
 
 class List
 {
-private:
-	list_node* head;
+
 public:
+	struct node
+	{
+		int data;
+		node* next;
+	};
+
 	List() { head = nullptr; }
-	list_node* getHead() { return head; }
-	int Count(list_node* p);
+	List(int* A, int size) { for (int i = 0; i < size; i++) Insert(A[i], i); }
+	node* getHead() { return head; }
+	int Count(node* p);
 	void Display();
 	void Insert(int x, int index);
 	void Delete(int index);
-	list_node* Search(int x);
-};
-
-struct bst_node
-{
-	bst_node* lchild;
-	int data;
-	bst_node* rchild;
+	node* Search(int x);
+private:
+	node* head;
 };
 
 class BST 
 {
-private:
-	bst_node* root;
 public:
+	struct node
+	{
+		node* lchild;
+		int data;
+		node* rchild;
+	};
+
 	BST() { root = nullptr; }
-	bst_node* getRoot() { return root; }
+	BST(int* A, int size) { for (int i = 0; i < size; i++) Insert(A[i]); }
+	node* getRoot() { return root; }
 	void Insert(int x);
-	bst_node* Delete(bst_node* p, int x);
-	int Height(bst_node* p);
-	bst_node* InPre(bst_node* p);
-	bst_node* InSucc(bst_node* p);
-	void Inorder(bst_node* p);
-	bst_node* Search(int x);
+	node* Delete(node* p, int x);
+	int Height(node* p);
+	node* InPre(node* p);
+	node* InSucc(node* p);
+	void Inorder(node* p);
+	node* Search(int x);
+private:
+	node* root;
 };
 
 int* GetData(string fname);
 int GetSize(string fname);
 void DisplayArray(int* A, int n);
 int* Insert(int* A, int len, int x, int index);
-list_node* CreateList(int* A, int size);
-void DisplayList(list_node* head);
+List::node* CreateList(int* A, int size);
+void DisplayList(List::node* head);
 
 int main()
 {
@@ -67,22 +70,27 @@ int main()
 	int* tab = GetData(fname);	
 	//DisplayArray(tab, size);
 
-	List list;
+	/*List list;
 	list.Insert(1, 0);
 	list.Insert(2, 1);
 	list.Insert(3, 2);
 	list.Insert(4, 3);
-	list.Insert(5, 4);
+	list.Insert(5, 4);*/
 
-	BST tree;
+	List list(tab, size);
+	list.Display();
+
+	/*BST tree;
 	tree.Insert(30);
 	tree.Insert(20);
 	tree.Insert(40);
 	tree.Insert(10);
 	tree.Insert(25);
 	tree.Insert(35);
-	tree.Insert(45);
+	tree.Insert(45);*/
 
+	BST tree(tab, size);
+	tree.Inorder(tree.getRoot());
 	
 	/*tree.Inorder(tree.getRoot());
 	tree.Delete(tree.getRoot(), 30);*/
@@ -165,12 +173,12 @@ int* Insert(int* A, int len, int x, int index)
 	return res;
 }
 
-list_node* CreateList(int* A, int size)
+List::node* CreateList(int* A, int size)
 {
-	list_node* head = new list_node;
+	List::node* head = new List::node;
 
-	list_node* temp;
-	list_node* last;
+	List::node* temp;
+	List::node* last;
 
 	head->data = A[0];
 	head->next = nullptr;
@@ -178,7 +186,7 @@ list_node* CreateList(int* A, int size)
 
 	for (int i = 1; i < size; i++)
 	{
-		temp = new list_node;
+		temp = new List::node;
 
 		temp->data = A[i];
 		temp->next = nullptr;
@@ -187,9 +195,9 @@ list_node* CreateList(int* A, int size)
 		last = temp;
 	}
 	return head;
-}
+} 
 
-int List::Count(list_node* p)
+int List::Count(node* p)
 {
 	int c = 0;
 	while (p)
@@ -202,7 +210,7 @@ int List::Count(list_node* p)
 
 void List::Display()
 {
-	list_node* p = head;
+	node* p = head;
 	while (p != NULL)
 	{
 		cout << p->data << "->";
@@ -212,9 +220,9 @@ void List::Display()
 
 void List::Insert(int x, int index)
 {
-	list_node* list = head;
-	list_node* p = nullptr;
-	list_node* temp = new list_node;
+	node* list = head;
+	node* p = nullptr;
+	node* temp = new node;
 	temp->data = x;
 
 	if (index < 0 || index > Count(list))
@@ -226,7 +234,7 @@ void List::Insert(int x, int index)
 	{
 		if (head == nullptr)
 		{
-			p = new list_node;
+			p = new node;
 			p->data = x;
 			p->next = nullptr;
 			head = p;
@@ -250,8 +258,8 @@ void List::Insert(int x, int index)
 
 void List::Delete(int index)
 {
-	list_node* p = getHead();
-	list_node* q = nullptr;
+	node* p = getHead();
+	node* q = nullptr;
 
 	if (index < 1 || index > Count(p))
 	{
@@ -275,10 +283,10 @@ void List::Delete(int index)
 	}
 }
 
-list_node* List::Search(int x)
+List::node* List::Search(int x)
 {
-	list_node* p = getHead();
-	list_node* q = nullptr;
+	node* p = getHead();
+	node* q = nullptr;
 
 	while (p != NULL)
 	{
@@ -298,14 +306,14 @@ list_node* List::Search(int x)
 void BST::Insert(int x)
 {
 
-	bst_node* t = root; // tail pointer
-	bst_node* p = nullptr;
-	bst_node* r = nullptr;
+	node* t = root; // tail pointer
+	node* p = nullptr;
+	node* r = nullptr;
 
 	// root is empty
 	if (root == nullptr)
 	{
-		p = new bst_node;
+		p = new node;
 		p->data = x;
 		p->lchild = nullptr;
 		p->rchild = nullptr;
@@ -321,7 +329,7 @@ void BST::Insert(int x)
 		else return;
 	}
 
-	p = new bst_node;
+	p = new node;
 	p->data = x;
 	p->lchild = nullptr;
 	p->rchild = nullptr;
@@ -337,9 +345,9 @@ void BST::Insert(int x)
 
 }
 
-bst_node* BST::Delete(bst_node* p, int x)
+BST::node* BST::Delete(node* p, int x)
 {
-	bst_node* q;
+	node* q;
 
 	if (p == nullptr) 
 	{
@@ -382,7 +390,7 @@ bst_node* BST::Delete(bst_node* p, int x)
 	return p;
 }
 
-int BST::Height(bst_node* p)
+int BST::Height(node* p)
 {
 	int x;
 	int y;
@@ -395,7 +403,7 @@ int BST::Height(bst_node* p)
 	return x > y ? x + 1 : y + 1;
 }
 
-bst_node* BST::InPre(bst_node* p)
+BST::node* BST::InPre(node* p)
 {
 	while (p && p->rchild != nullptr) 
 	{
@@ -404,7 +412,7 @@ bst_node* BST::InPre(bst_node* p)
 	return p;
 }
 
-bst_node* BST::InSucc(bst_node* p)
+BST::node* BST::InSucc(node* p)
 {
 	while (p && p->lchild != nullptr) 
 	{
@@ -413,7 +421,7 @@ bst_node* BST::InSucc(bst_node* p)
 	return p;
 }
 
-void BST::Inorder(bst_node* p)
+void BST::Inorder(node* p)
 {
 	if (p) 
 	{
@@ -423,9 +431,9 @@ void BST::Inorder(bst_node* p)
 	}
 }
 
-bst_node* BST::Search(int x)
+BST::node* BST::Search(int x)
 {
-	bst_node* t = root;
+	node* t = root;
 	while (t != nullptr) {
 		if (x == t->data) {
 			return t;
