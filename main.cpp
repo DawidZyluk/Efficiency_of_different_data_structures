@@ -5,11 +5,10 @@
 using namespace std;
 
 // TO DO:
-// Move structs to classes. Add overloaded constructors
+// 
 
 class List
 {
-
 public:
 	struct node
 	{
@@ -45,9 +44,10 @@ public:
 	void Insert(int x);
 	node* Delete(node* p, int x);
 	int Height(node* p);
-	node* InPre(node* p);
-	node* InSucc(node* p);
-	void Inorder(node* p);
+	node* Predecessor(node* p);
+	node* Successor(node* p);
+	void DisplayInorder(node* p);
+	void DisplayPreorder(node* p);
 	node* Search(int x);
 private:
 	node* root;
@@ -57,8 +57,9 @@ int* GetData(string fname);
 int GetSize(string fname);
 void DisplayArray(int* A, int n);
 int* Insert(int* A, int len, int x, int index);
+int* Delete(int* A, int len, int index);
+int* Search(int* A, int len, int x);
 List::node* CreateList(int* A, int size);
-void DisplayList(List::node* head);
 
 int main()
 {
@@ -68,7 +69,7 @@ int main()
 
 	int size = GetSize(fname);
 	int* tab = GetData(fname);	
-	//DisplayArray(tab, size);
+	DisplayArray(tab, size);
 
 	/*List list;
 	list.Insert(1, 0);
@@ -77,8 +78,6 @@ int main()
 	list.Insert(4, 3);
 	list.Insert(5, 4);*/
 
-	List list(tab, size);
-	list.Display();
 
 	/*BST tree;
 	tree.Insert(30);
@@ -88,12 +87,7 @@ int main()
 	tree.Insert(25);
 	tree.Insert(35);
 	tree.Insert(45);*/
-
-	BST tree(tab, size);
-	tree.Inorder(tree.getRoot());
 	
-	/*tree.Inorder(tree.getRoot());
-	tree.Delete(tree.getRoot(), 30);*/
 }
 
 int* GetData(string fname)
@@ -170,6 +164,29 @@ int* Insert(int* A, int len, int x, int index)
 			i--;
 		}
 	}
+	return res;
+}
+
+int* Delete(int* A, int len, int index)
+{
+	int* res = nullptr;
+	if (index >= 0 && index < len)
+	{
+		res = new int[len - 1];
+		int j = 0;
+		for (int i = 0; i < len; i++)
+		{
+			if (i == index) i++;
+			res[j++] = A[i];
+		}
+	}
+	return res;
+}
+
+int* Search(int* A, int len, int x)
+{
+	int* res = nullptr;
+	for (int i = 0; i < len; i++) if (A[i] == x) res = &A[i];
 	return res;
 }
 
@@ -334,32 +351,19 @@ void BST::Insert(int x)
 	p->lchild = nullptr;
 	p->rchild = nullptr;
 
-	if (x < r->data)
-	{
-		r->lchild = p;
-	}
-	else
-	{
-		r->rchild = p;
-	}
-
+	if (x < r->data) r->lchild = p;
+	else r->rchild = p;
 }
 
 BST::node* BST::Delete(node* p, int x)
 {
 	node* q;
 
-	if (p == nullptr) 
-	{
-		return nullptr;
-	}
+	if (p == nullptr) return nullptr;
 
 	if (p->lchild == nullptr && p->rchild == nullptr) 
 	{
-		if (p == root) 
-		{
-			root = nullptr;
-		}
+		if (p == root) root = nullptr;
 		delete p;
 		return nullptr;
 	}
@@ -376,13 +380,13 @@ BST::node* BST::Delete(node* p, int x)
 	{
 		if (Height(p->lchild) > Height(p->rchild)) 
 		{
-			q = InPre(p->lchild);
+			q = Predecessor(p->lchild);
 			p->data = q->data;
 			p->lchild = Delete(p->lchild, q->data);
 		}
 		else 
 		{
-			q = InSucc(p->rchild);
+			q = Successor(p->rchild);
 			p->data = q->data;
 			p->rchild = Delete(p->rchild, q->data);
 		}
@@ -403,7 +407,7 @@ int BST::Height(node* p)
 	return x > y ? x + 1 : y + 1;
 }
 
-BST::node* BST::InPre(node* p)
+BST::node* BST::Predecessor(node* p)
 {
 	while (p && p->rchild != nullptr) 
 	{
@@ -412,7 +416,7 @@ BST::node* BST::InPre(node* p)
 	return p;
 }
 
-BST::node* BST::InSucc(node* p)
+BST::node* BST::Successor(node* p)
 {
 	while (p && p->lchild != nullptr) 
 	{
@@ -421,13 +425,23 @@ BST::node* BST::InSucc(node* p)
 	return p;
 }
 
-void BST::Inorder(node* p)
+void BST::DisplayInorder(node* p)
 {
 	if (p) 
 	{
-		Inorder(p->lchild);
-		cout << p->data << ", " << flush;
-		Inorder(p->rchild);
+		DisplayInorder(p->lchild);
+		cout << p->data << ", ";
+		DisplayInorder(p->rchild);
+	}
+}
+
+void BST::DisplayPreorder(node* p)
+{
+	if (p)
+	{
+		cout << p->data << ", ";
+		DisplayPreorder(p->lchild);
+		DisplayPreorder(p->rchild);
 	}
 }
 
