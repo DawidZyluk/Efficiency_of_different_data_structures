@@ -42,7 +42,7 @@ public:
 	BST(int* A, int size) { for (int i = 0; i < size; i++) Insert(A[i]); }
 	node* getRoot() { return root; }
 	void Insert(int x);
-	node* Delete(node* p, int x);
+	node* Delete(node* p);
 	int Height(node* p);
 	node* Predecessor(node* p);
 	node* Successor(node* p);
@@ -55,6 +55,9 @@ private:
 
 int* GetData(string fname);
 int GetSize(string fname);
+int* RandomArrayGenerator(int n);
+int* AscendingArrayGenerator(int n);
+int* DescendingArrayGenerator(int n);
 void DisplayArray(int* A, int n);
 int* Insert(int* A, int len, int x, int index);
 int* Delete(int* A, int len, int index);
@@ -63,30 +66,34 @@ List::node* CreateList(int* A, int size);
 
 int main()
 {
+	clock_t start, end;
+	double executionTime;
 	string fname = "dane.txt";
 	/*cout << "Wybierz plik: ";
 	cin >> fname;*/
 
-	int size = GetSize(fname);
-	int* tab = GetData(fname);	
-	DisplayArray(tab, size);
+	/*int size = GetSize(fname);
+	int* tab = GetData(fname);*/
 
-	/*List list;
-	list.Insert(1, 0);
-	list.Insert(2, 1);
-	list.Insert(3, 2);
-	list.Insert(4, 3);
-	list.Insert(5, 4);*/
+	
+	int size = 5;
+	int* tab = AscendingArrayGenerator(size);
+	
+	BST lista(tab, size);
+	lista.DisplayPreorder(lista.getRoot());
+	cout << endl;
 
+	BST::node* p = lista.Search(4);
 
-	/*BST tree;
-	tree.Insert(30);
-	tree.Insert(20);
-	tree.Insert(40);
-	tree.Insert(10);
-	tree.Insert(25);
-	tree.Insert(35);
-	tree.Insert(45);*/
+	start = clock();
+	lista.Delete(p);
+	end = clock();
+
+	lista.DisplayPreorder(lista.getRoot());
+
+	executionTime = double(end - start) / CLOCKS_PER_SEC;
+	cout << endl;
+	cout << executionTime;
 	
 }
 
@@ -131,6 +138,30 @@ int GetSize(string fname)
 		file.close();
 	}
 	return size;
+}
+
+int* RandomArrayGenerator(int n)
+{
+	int* arr = new int[n];
+	for (int i = 0; i < n; i++) arr[i] = (rand() % n);
+
+	return arr;
+}
+
+int* AscendingArrayGenerator(int n)
+{
+	int* arr = new int[n];
+	for (int i = 0; i < n; i++) arr[i] = i + 1;
+
+	return arr;
+}
+
+int* DescendingArrayGenerator(int n)
+{
+	int* arr = new int[n];
+	for (int i = 0; i < n; i++) arr[i] = n - i;
+
+	return arr;
 }
 
 void DisplayArray(int* A, int n)
@@ -355,42 +386,34 @@ void BST::Insert(int x)
 	else r->rchild = p;
 }
 
-BST::node* BST::Delete(node* p, int x)
+BST::node* BST::Delete(node* p)
 {
 	node* q;
 
 	if (p == nullptr) return nullptr;
 
-	if (p->lchild == nullptr && p->rchild == nullptr) 
+	if (p->lchild == nullptr && p->rchild == nullptr)
 	{
 		if (p == root) root = nullptr;
 		delete p;
 		return nullptr;
 	}
-
-	if (x < p->data) 
+	else
 	{
-		p->lchild = Delete(p->lchild, x);
-	}
-	else if (x > p->data) 
-	{
-		p->rchild = Delete(p->rchild, x);
-	}
-	else 
-	{
-		if (Height(p->lchild) > Height(p->rchild)) 
+		if (Height(p->lchild) > Height(p->rchild))
 		{
 			q = Predecessor(p->lchild);
 			p->data = q->data;
-			p->lchild = Delete(p->lchild, q->data);
+			p->lchild = Delete(p->lchild);
 		}
-		else 
+		else
 		{
 			q = Successor(p->rchild);
 			p->data = q->data;
-			p->rchild = Delete(p->rchild, q->data);
+			p->rchild = Delete(p->rchild);
 		}
 	}
+
 	return p;
 }
 
