@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <windows.h>
 
 using namespace std;
 
@@ -62,7 +63,8 @@ void DisplayArray(int* A, int n);
 int* Insert(int* A, int len, int x, int index);
 int* Delete(int* A, int len, int index);
 int* Search(int* A, int len, int x);
-List::node* CreateList(int* A, int size);
+int Random(int max, int min = 1);
+double Average(double* A, int n);
 
 int main()
 {
@@ -75,27 +77,308 @@ int main()
 	/*int size = GetSize(fname);
 	int* tab = GetData(fname);*/
 
+	double* InsertionTimes = new double[10];
+	double* SearchingTimes = new double[10];
+	double* DeletionTimes = new double[10];
+	double CollectiveData[27]{ 0 };
+
+	cout.setf(ios::fixed, ios::floatfield);
+
+	int* array = nullptr;
+	int size = 300000000;
+	for (int i = 0; i < 10; i++)
+	{
+		int number = Random(size);
+		int index = Random(size-1);
+
+		array = AscendingArrayGenerator(size);
+
+		start = clock();
+		Search(array, size, number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		SearchingTimes[i] = executionTime;
+
+		start = clock();
+		array = Insert(array, size, number, index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		InsertionTimes[i] = executionTime;
+
+		start = clock();
+		array = Delete(array, size, index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		DeletionTimes[i] = executionTime;
+		delete[] array;
+	}
+	cout << "########## Array ##########\n";
+	cout << "Size " << size << endl;
+	cout << "\nAverage times for ascending order (insertion, search and deletion):\n";
+	cout << Average(InsertionTimes, 10) << endl;
+	cout << Average(SearchingTimes, 10) << endl;
+	cout << Average(DeletionTimes, 10) << endl << endl;
+
+
+	for (int i = 0; i < 10; i++)
+	{
+		int number = Random(size);
+		int index = Random(size - 1);
+
+		array = DescendingArrayGenerator(size);
+
+		start = clock();
+		Search(array, size, number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		SearchingTimes[i] = executionTime;
+
+		start = clock();
+		array = Insert(array, size, number, index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		InsertionTimes[i] = executionTime;
+
+		start = clock();
+		array = Delete(array, size, index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		DeletionTimes[i] = executionTime;
+		delete[] array;
+	}
+	cout << "Average times for descending order (insertion, search and deletion):\n";
+	cout << Average(InsertionTimes, 10) << endl;
+	cout << Average(SearchingTimes, 10) << endl;
+	cout << Average(DeletionTimes, 10) << endl << endl;
+
+	for (int i = 0; i < 10; i++)
+	{
+		int number = Random(size);
+		int index = Random(size - 1);
+
+		array = RandomArrayGenerator(size);
+
+		start = clock();
+		Search(array, size, number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		SearchingTimes[i] = executionTime;
+
+		start = clock();
+		array = Insert(array, size, number, index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		InsertionTimes[i] = executionTime;
+
+		start = clock();
+		array = Delete(array, size, index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		DeletionTimes[i] = executionTime;
+		delete[] array;
+	}
+	cout << "Average times for random order (insertion, search and deletion):\n";
+	cout << Average(InsertionTimes, 10) << endl;
+	cout << Average(SearchingTimes, 10) << endl;
+	cout << Average(DeletionTimes, 10) << endl << endl;
+
+	size = 40000;
 	
-	int size = 5;
-	int* tab = AscendingArrayGenerator(size);
+	for (int i = 0; i < 10; i++)
+	{
+	array = AscendingArrayGenerator(size);
+	List list1(array, size);
+		int number = Random(size);
+		int index = Random(size - 1);
+
+		start = clock();
+		list1.Search(number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		SearchingTimes[i] = executionTime;
+
+		start = clock();
+		list1.Insert(number, index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		InsertionTimes[i] = executionTime;
+
+		start = clock();
+		list1.Delete(index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		DeletionTimes[i] = executionTime;
+	}
+	cout << "########## List ##########\n";
+	cout << "Size " << size << endl;
+	cout << "\nAverage times for ascending order (insertion, search and deletion):\n";
+	cout << Average(InsertionTimes, 10) << endl;
+	cout << Average(SearchingTimes, 10) << endl;
+	cout << Average(DeletionTimes, 10) << endl << endl;
 	
-	BST lista(tab, size);
-	lista.DisplayPreorder(lista.getRoot());
-	cout << endl;
+	for (int i = 0; i < 10; i++)
+	{
+	array = DescendingArrayGenerator(size);
+	List list2(array, size);
 
-	BST::node* p = lista.Search(4);
+		int number = Random(size);
+		int index = Random(size - 1);
 
-	start = clock();
-	lista.Delete(p);
-	end = clock();
+		start = clock();
+		list2.Search(number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		SearchingTimes[i] = executionTime;
 
-	lista.DisplayPreorder(lista.getRoot());
+		start = clock();
+		list2.Insert(number, index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		InsertionTimes[i] = executionTime;
 
-	executionTime = double(end - start) / CLOCKS_PER_SEC;
-	cout << endl;
-	cout << executionTime;
+		start = clock();
+		list2.Delete(index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		DeletionTimes[i] = executionTime;
+
+	}
+	cout << "Average times for descending order (insertion, search and deletion):\n";
+	cout << Average(InsertionTimes, 10) << endl;
+	cout << Average(SearchingTimes, 10) << endl;
+	cout << Average(DeletionTimes, 10) << endl << endl;
 	
-}
+	
+	for (int i = 0; i < 10; i++)
+	{
+	array = RandomArrayGenerator(size);
+	List list3(array, size);
+
+		int number = Random(size);
+		int index = Random(size - 1);
+
+		start = clock();
+		list3.Search(number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		SearchingTimes[i] = executionTime;
+
+		start = clock();
+		list3.Insert(number, index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		InsertionTimes[i] = executionTime;
+
+		start = clock();
+		list3.Delete(index);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		DeletionTimes[i] = executionTime;
+
+	}
+	cout << "Average times for random order (insertion, search and deletion):\n";
+	cout << Average(InsertionTimes, 10) << endl;
+	cout << Average(SearchingTimes, 10) << endl;
+	cout << Average(DeletionTimes, 10) << endl << endl;
+	
+
+	size = 60000;
+	for (int i = 0; i < 10; i++)
+	{
+		array = AscendingArrayGenerator(size);
+		BST tree1(array, size);
+
+		int number = Random(size);
+
+		start = clock();
+		tree1.Insert(number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		InsertionTimes[i] = executionTime;
+
+		start = clock();
+		BST::node* p = tree1.Search(number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		SearchingTimes[i] = executionTime;
+
+		start = clock();
+		tree1.Delete(p);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		DeletionTimes[i] = executionTime;
+
+	}
+	cout << "########## Tree ##########\n";
+	cout << "Size " << size << endl;
+	cout << "\nAverage times for ascending order (insertion, search and deletion):\n";
+	cout << Average(InsertionTimes, 10) << endl;
+	cout << Average(SearchingTimes, 10) << endl;
+	cout << Average(DeletionTimes, 10) << endl << endl;
+
+
+	for (int i = 0; i < 10; i++)
+	{
+		array = DescendingArrayGenerator(size);
+		BST tree2(array, size);
+
+		int number = Random(size);
+
+		start = clock();
+		tree2.Insert(number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		InsertionTimes[i] = executionTime;
+
+		start = clock();
+		BST::node* p = tree2.Search(number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		SearchingTimes[i] = executionTime;
+
+		start = clock();
+		tree2.Delete(p);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		DeletionTimes[i] = executionTime;
+
+	}
+	cout << "Average times for descending order (insertion, search and deletion):\n";
+	cout << Average(InsertionTimes, 10) << endl;
+	cout << Average(SearchingTimes, 10) << endl;
+	cout << Average(DeletionTimes, 10) << endl << endl;
+
+	for (int i = 0; i < 10; i++)
+	{
+		array = RandomArrayGenerator(size);
+		BST tree3(array, size);
+
+		int number = Random(size);
+
+		start = clock();
+		tree3.Insert(number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		InsertionTimes[i] = executionTime;
+
+		start = clock();
+		BST::node* p = tree3.Search(number);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		SearchingTimes[i] = executionTime;
+
+		start = clock();
+		tree3.Delete(p);
+		end = clock();
+		executionTime = double(end - start) / CLOCKS_PER_SEC;
+		DeletionTimes[i] = executionTime;
+
+	}
+	cout << "Average times for random order (insertion, search and deletion):\n";
+	cout << Average(InsertionTimes, 10) << endl;
+	cout << Average(SearchingTimes, 10) << endl;
+	cout << Average(DeletionTimes, 10) << endl << endl;	
+	}
 
 int* GetData(string fname)
 {
@@ -221,29 +504,19 @@ int* Search(int* A, int len, int x)
 	return res;
 }
 
-List::node* CreateList(int* A, int size)
+int Random(int min, int max)
 {
-	List::node* head = new List::node;
+	int range = max - min + 1;
+	int num = rand() % range + min;
+	return num;
+}
 
-	List::node* temp;
-	List::node* last;
-
-	head->data = A[0];
-	head->next = nullptr;
-	last = head;
-
-	for (int i = 1; i < size; i++)
-	{
-		temp = new List::node;
-
-		temp->data = A[i];
-		temp->next = nullptr;
-
-		last->next = temp;
-		last = temp;
-	}
-	return head;
-} 
+double Average(double* A, int n)
+{
+	double sum = 0;
+	for (int i = 0; i < n; i++) sum += A[i];
+	return sum / n;
+}
 
 int List::Count(node* p)
 {
@@ -275,7 +548,7 @@ void List::Insert(int x, int index)
 
 	if (index < 0 || index > Count(list))
 	{
-		cout << "Wrong Index";
+		//cout << "Wrong Index!";
 		return;
 	}
 	else
@@ -311,7 +584,7 @@ void List::Delete(int index)
 
 	if (index < 1 || index > Count(p))
 	{
-		cout << "Wrong index";
+		//cout << "Wrong index";
 	}
 	else if(index == 1)
 	{
@@ -358,7 +631,7 @@ void BST::Insert(int x)
 	node* p = nullptr;
 	node* r = nullptr;
 
-	// root is empty
+
 	if (root == nullptr)
 	{
 		p = new node;
