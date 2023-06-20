@@ -1,4 +1,3 @@
 # Efficiency_of_different_data_structures
 
-Project for data structures and computational complexity course at my university. Program made for comparing 
-binary search tree's and list's time needed for inserting, searching and inserting an element. 
+This project aims to compare the performance of Binary Search Trees and Lists in terms of the time required for performing common operations such as inserting, searching, and deleting elements. It was developed as part of the course "Data Structures and Computational Complexity" at Wrocław University of Science and Technology.
